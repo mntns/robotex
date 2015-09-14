@@ -1,6 +1,19 @@
 defmodule Robotex do
+  @moduledoc """
+  Main module containing the important code of this project."
+  """
+  
   @api_url "https://api.telegram.org/bot"
+  
+  
+  # Type definitions
+  # TODO: Build "advanced" parser logic
+  # defmodule User do
+  #   defstruct id: nil, first_name: nil, last_name: nil, username: nil
+  #   @type t :: %User{id: integer, first_name: String.t, last_name: String.t, username: String.t}
+  # end
 
+  # Helper methods
   def get_token do
     Application.get_env(:robotex, :token)
   end
@@ -9,40 +22,64 @@ defmodule Robotex do
     @api_url <> get_token <> "/" <> method_string
   end
 
-  def request(method, request_body \\ nil) do
-    IO.inspect request_body
+  def request(body, method) do
     url = build_url(method)
-    IO.inspect url
-
-    case request_body do
+    case body do
       nil ->
         {:ok, %HTTPoison.Response{status_code: 200, body: body}} = HTTPoison.get(url)
-        body |> JSX.decode!
+        body |> JSX.decode!([{:labels, :atom}])
       _ ->
-        {:ok, %HTTPoison.Response{status_code: 200, body: body}} = HTTPoison.post(url, request_body)
-        body |> JSX.decode!
+        body = JSX.encode!(body)
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}} = HTTPoison.post(url, body, %{"Content-type" => "application/json"})
+        body |> JSX.decode!([{:labels, :atom}])
     end
   end
 
 
   # API methods
 
+  @doc """
+  Returns basic information about the bot.
+  """
   def get_me do
-    "getMe" |> request
+    nil |> request("getMe")
+    # %User{id: res[:id], first_name: res[:first_name], last_name: res[:last_name], username: res[:username]}
   end
 
-  def send_message(chat_id, text, disable_web_page_preview \\ nil, reply_to_message_id \\ nil, reply_markup \\ nil) do
-    body = %{chat_id: chat_id, text: text} |> JSX.encode!
-    request("sendMessage", body)
+  def send_message(chat_id, text, parse_mode \\ nil, disable_webpage_preview \\ nil, reply_to_message_id \\ nil, reply_markup \\ nil) do
+    %{chat_id: chat_id, text: text, parse_mode: parse_mode, disable_webpage_preview: disable_webpage_preview, reply_to_message_id: reply_to_message_id, reply_markup: reply_markup}
+    |> Enum.filter(fn {k, v} -> v != nil end)
+    |> request("sendMessage")
   end
 
   def forward_message(chat_id, from_chat_id, message_id) do
+    %{chat_id: chat_id, from_chat_id: from_chat_id, message_id: message_id}
+    |> request("forwardMessage")
   end
 
-  def send_photo(chat_id, photo) do
+  def send_photo(chat_id, photo, caption \\ nil, reply_to_message_id \\ nil, reply_markup \\ nil) do
+    %{chat_id: chat_id, photo: photo}
   end
 
-  def getUpdate do
-    "getUpdates" |> request
+  def send_audio(chat_id, audio) do
+  end
+
+  def send_document(chat_id, document) do
+  end 
+  
+  def send_sticker(chat_id, sticker) do
+  end
+
+  def send_video(chat_id, video) do
+  end
+
+  def send_location(chat_id, location) do
+  end 
+  
+  def send_chat_action(chat_id, chat_action) do
+  end 
+  
+  def get_update do
+    nil |> request("getUpdates")
   end
 end

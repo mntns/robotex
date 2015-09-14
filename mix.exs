@@ -28,6 +28,7 @@ defmodule Robotex.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [{:exjsx, "~> 3.1.0"},
-     {:httpoison, "~> 0.7"}]
+     {:httpoison, "~> 0.7"},
+     {:inch_ex, only: :docs}]
   end
 end
