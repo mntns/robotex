@@ -5,13 +5,6 @@ defmodule Robotex do
   
   @api_url "https://api.telegram.org/bot"
   
-  
-  # Type definitions
-  # TODO: Build "advanced" parser logic
-  # defmodule User do
-  #   defstruct id: nil, first_name: nil, last_name: nil, username: nil
-  #   @type t :: %User{id: integer, first_name: String.t, last_name: String.t, username: String.t}
-  # end
 
   # Helper methods
   def get_token do
