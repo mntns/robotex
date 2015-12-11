@@ -1,7 +1,7 @@
 defmodule Robotex do
   @api_url "https://api.telegram.org/bot"
   
-  defp token do
+  def token do
     Application.get_env(:robotex, :token)
   end
 
